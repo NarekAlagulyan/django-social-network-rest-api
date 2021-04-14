@@ -1,0 +1,38 @@
+{% extends 'layout/base.html' %}
+{% load bootstrap4 %}
+
+{% block title %}
+    Profile Update
+{% endblock %}
+
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-12 col-sm-12 col-md-12 col-lg-10 mx-auto m-4 rounded">
+            <div class="bg-white shadow rounded overflow-hidden">
+                <div class="px-4 pt-0 p-4 cover">
+                    <div class="profile-head p-5">
+                        <div class="profile mr-3">
+                            <a href="{{ user.picture.url }}" target="_blank">
+                                <img src="{{ request.user.picture.url }}"
+                                     class="rounded mb-2 img-thumbnail">
+                            </a>
+                        </div>
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {% bootstrap_form form %}
+                            {% buttons %}
+                                <button class="btn btn-primary btn-block" type="submit">Update</button>
+                            {% endbuttons %}
+                        </form>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

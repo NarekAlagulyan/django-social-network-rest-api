@@ -1,0 +1,12 @@
+{% extends 'layout/base.html' %}
+{% load bootstrap4 %}
+
+{% block title %}
+    Already in system
+{% endblock %}
+
+
+{% block content %}
+    <h2 class="text-light">{{ user.username }}, you are already in system, you cannot register again!</h2>
+    <a href="{% url 'main:user_profile' %}" class="nav-link">Go back to your profile</a>
+{% endblock %}

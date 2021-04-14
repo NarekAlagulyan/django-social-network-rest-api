@@ -1,0 +1,30 @@
+{% extends 'layout/base.html' %}
+{% load bootstrap4 %}
+
+{% block title %}
+    Login
+{% endblock %}
+
+
+{% block content %}
+    <style>
+        body {
+            background-color: #292b2c;
+        }
+    </style>
+    <div class="row m-0 m-sm-0 m-md-4 m-lg-5">
+        <div class="col-12 col-sm-10 col-md-10 col-lg-9 col-xl-7 mx-auto bg-light m-4 p-5 rounded">
+            <h2>Login into your profile</h2>
+            <form method="POST">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                <div class="d-flex align-items-center">
+                    <button type="submit" class="btn btn-primary mr-2">
+                        Login
+                    </button>
+                    <a href="{% url 'main:user_register' %}">Don't have an account?</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

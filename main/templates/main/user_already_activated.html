@@ -1,0 +1,16 @@
+{% extends 'layout/base.html' %}
+{% load bootstrap4 %}
+
+{% block title %}
+    User already activated
+{% endblock %}
+
+
+{% block content %}
+    <div class="row m-0 m-sm-0 m-md-4 m-lg-5">
+        <div class="col-12 col-sm-10 col-md-10 col-lg-9 col-xl-7 mx-auto bg-light m-4 rounded p-5">
+            <h2 class="text-dark">{{ user.username }}, your account already activated!</h2>
+            <a href="{% url 'main:user_profile' %}" class="nav-link">Go back to your profile</a>
+        </div>
+    </div>
+{% endblock %}

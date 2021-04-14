@@ -1,0 +1,30 @@
+{% extends 'layout/base.html' %}
+{% load bootstrap4 %}
+
+
+{% block title %}
+    Registration
+{% endblock %}
+
+
+{% block content %}
+    <style>
+    body{
+        background-color: #292b2c;
+    }
+    </style>
+    <div class="row m-0 m-sm-0 m-md-4 m-lg-5">
+        <div class="col-12 col-sm-10 col-md-10 col-lg-9 col-xl-7 mx-auto bg-light m-4 rounded p-5">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                 <div class="d-flex align-items-center">
+                    <button type="submit" class="btn btn-primary mr-2">
+                        Register
+                    </button>
+                    <a href="{% url 'main:user_login' %}">Already have an account?</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% load bootstrap4 %}
+
+<style>
+    .box .form-group {
+        margin-left: 10px;
+    }
+</style>
+
+<div class="box">
+    <form method="post" action="{% url 'main:search_redirect' %}">
+        {% csrf_token %}
+        {% bootstrap_form search_form %}
+        {% buttons %}
+            <div class="row d-flex justify-content-around px-3">
+                <button type="submit" class="btn btn-primary col-6">Search</button>
+                <button type="reset" class="btn btn-danger col-5">Clean</button>
+            </div>
+        {% endbuttons %}
+    </form>
+</div>

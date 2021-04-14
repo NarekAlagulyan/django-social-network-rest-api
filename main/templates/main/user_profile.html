@@ -1,0 +1,92 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% load bootstrap4 %}
+
+{% block metadata %}
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
+
+{% block title %}
+    Profile
+{% endblock %}
+
+{% block content %}
+    <div class="row py-5 px-4">
+        <div class="col-12 col-md-11 mx-auto">
+            <!-- Profile widget -->
+            <div class="bg-white shadow rounded overflow-hidden">
+                <div class="px-4 pt-0 pb-4 cover">
+                    <div class="media align-items-end profile-head">
+                        <div class="profile mr-3">
+                            <a href="{{ request.user.picture.url }}" target="_blank">
+                                <img src="{{ request.user.picture.url }}" width="330px"
+                                     class="rounded mb-2 img-thumbnail">
+                            </a>
+                            <a href="{% url 'main:user_update' %}" class="btn btn-dark btn-sm btn-block">
+                                Update profile
+                            </a>
+                        </div>
+                        <div class="media-body mb-5 text-white">
+                            <h4 class="mt-0 mb-0">{{ user.username }}</h4>
+                            {% if user.first_name and user.last_name %}
+                                <p class="small mb-4"><i class="fas fa-map-marker-alt mr-2"></i>
+                                    {{ user.first_name }} {{ user.last_name }}
+                                </p>
+                            {% else %}
+                                <p class="small mb-4">
+
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-light p-4 d-flex justify-content-end text-center">
+
+                    <ul class="list-inline mb-0 d-flex align-items-center">
+                        <li class="list-inline-item">
+                            <h5 class="font-weight-bold mb-0 d-block">{{ user_post_count }}</h5>
+                            <small class="text-muted">
+                                <i class="fas fa-image mr-1"></i>Posts
+                            </small>
+                        </li>
+                        {#                        <li class="list-inline-item">#}
+                        {#                            <h5 class="font-weight-bold mb-0 d-block">745</h5><small class="text-muted"> <i#}
+                        {#                                clas    s="fas fa-user mr-1"></i>Followers</small>#}
+                        {#                        </li>#}
+                        {#                        <li class="list-inline-item">#}
+                        {#                            <h5 class="font-weight-bold mb-0 d-block">340</h5><small class="text-muted"> <i#}
+                        {#                                class="fas fa-user mr-1"></i>Following</small>#}
+                        {#                        </li>#}
+                    </ul>
+                </div>
+                <div class="px-4 py-3">
+                    <h5 class="mb-0">About</h5>
+                    <div class="p-4 rounded shadow-sm bg-light">
+                        {{ user.about }}
+                    </div>
+                </div>
+                <div class="py-4 px-4">
+                    <div class="d-flex align-items-center justify-content-end mb-3">
+                        <a href="{% url 'main:post_create' %}" class="btn btn-primary">New post</a>
+                    </div>
+                </div>
+            </div>
+
+            {% for post in posts %}
+                <div class="mt-5 mb-5 row">
+                    <div class="col-12 col-sm-12 col-md-10 col-lg-9 mx-auto">
+                        {% include 'layout/post.html' %}
+                        <a href="{% url 'main:post_detail' pk=post.pk %}" class="btn btn-dark btn-block">Comment</a>
+                    </div>
+                </div>
+            {% empty %}
+                <h3 class="d-flex justify-content-center text-light mt-2 mb-3">User don't have any post yet</h3>
+            {% endfor %}
+
+            <div class="d-flex justify-content-center">
+                {% bootstrap_pagination page_obj %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

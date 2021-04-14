@@ -1,0 +1,24 @@
+{% extends 'layout/base.html' %}
+{% load bootstrap4 %}
+
+{% block title %}
+    Profile delete
+{% endblock %}
+
+
+{% block content %}
+    <style>
+        body {
+            background-color: #292b2c;
+        }
+    </style>
+    <div class="row">
+        <div class="col-12 col-sm-12 col-md-12 col-lg-7 mx-auto bg-light m-4 p-5 rounded">
+            <h2>{{ user.username }} :: delete profile</h2>
+            <form method="post">
+                {% csrf_token %}
+                {% buttons submit="Delete account" %}{% endbuttons %}
+            </form>
+        </div>
+    </div>
+{% endblock %}

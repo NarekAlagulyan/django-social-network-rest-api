@@ -1,0 +1,43 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <span class="navbar-brand">Alagulyan POSTS</span>
+    <button class="navbar-toggler mb-2" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" href="{% url 'main:home' %}">Posts<span class="sr-only">(current)</span></a>
+            </li>
+            {% if user.is_authenticated %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        My Profile
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="{% url 'main:user_profile' %}">Profile</a>
+                        <a class="dropdown-item" href="{% url 'main:user_posts' username=user.username %}">
+                            My posts
+                        </a>
+                        <a class="dropdown-item" href="{% url 'main:user_logout' %}">Logout</a>
+                        <a class="dropdown-item" href="{% url 'main:user_update' %}">Update Account</a>
+                        <a class="dropdown-item" href="{% url 'main:user_password_reset' %}">Reset password</a>
+                        <a class="dropdown-item" href="{% url 'main:user_delete' %}">Delete Account</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'main:post_create' %}">New post</a>
+                </li>
+            {% else %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'main:user_login' %}">Login</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'main:user_register' %}">Registration</a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+    {% include 'layout/search.html' %}
+</nav>

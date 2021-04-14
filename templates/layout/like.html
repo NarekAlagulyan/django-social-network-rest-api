@@ -1,0 +1,25 @@
+{% load filtersandtags %}
+{% load bootstrap4 %}
+
+<style>
+    .like_btn:hover {
+        transform: scale(1.06);
+        transition: all 0.5s ease;
+    }
+    .like_btn:focus {
+        outline: 0;
+    }
+
+</style>
+
+{% if request.user.is_authenticated %}
+    <button id="like_btn{{ post.pk }}" class="bg-transparent p-0 border-0 like_btn " type="submit" style="font-size: 20px;">
+        {% if request.user in post.likes.all %}
+            &#10084;&#65039;
+        {% else %}
+            &#129293;
+        {% endif %}
+    </button>
+{% else %}
+    &#129505;
+{% endif %}

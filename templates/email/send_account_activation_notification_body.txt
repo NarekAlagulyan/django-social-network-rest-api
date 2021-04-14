@@ -1,0 +1,7 @@
+{% autoescape off %}
+Hi, {{ user.username }}
+You just registered to your account, please click link below to activate your account
+{{ host }}{% url 'main:user_account_activate' sign=sign %}
+
+Thanks for for your attention!
+{% endautoescape %}

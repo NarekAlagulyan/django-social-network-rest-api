@@ -1,0 +1,25 @@
+{% extends 'layout/base.html' %}
+{% load bootstrap4 %}
+
+{% block title %}
+    Create post
+{% endblock %}
+
+
+{% block content %}
+    <style>
+        body {
+            background-color: #292b2c;
+        }
+    </style>
+    <div class="row m-0 m-sm-0 m-md-4 m-lg-5">
+        <div class="col-12 col-sm-10 col-md-10 col-lg-9 col-xl-7 mx-auto bg-light m-4 rounded p-5">
+            <h2>New post</h2>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                {% buttons submit="Share" %}{% endbuttons %}
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% load static %}
+{% load bootstrap4 %}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    {% bootstrap_css %}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    {% block metadata %}
+
+    {% endblock %}
+    {% bootstrap_javascript jquery='full' %}
+
+    <title>
+        {% block title %}
+
+        {% endblock %}
+    </title>
+</head>
+<body id="body">
+
+{% include 'layout/navbar.html' %}
+
+<div class="container">
+    {% bootstrap_messages %}
+    {% block content %}
+
+
+    {% endblock %}
+</div>
+<script>
+    $('.like_form').submit(function(event) {
+        event.preventDefault();
+        const post_id = $(this).attr('id');
+        $.ajax({
+            type: $(this).attr('method'),
+            url: $(this).attr('action'),
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'post_id': post_id,
+            },
+            success: function(data) {
+
+                let [count, liked] = [data['like_count'], data['post_liked']]
+                console.log(liked)
+                if (liked) {
+                    $(`#like_btn${post_id}`).html('&#10084;&#65039;')
+                } else {
+                    $(`#like_btn${post_id}`).html('&#129293;')
+                }
+                console.log(count);
+                $(`#${post_id} .like_count`).html(`<b>${count}</b>`)
+
+            },
+            error: function(response) {
+                console.log('error')
+            },
+        })
+    })
+</script>
+</body>
+</html>

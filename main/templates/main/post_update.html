@@ -1,0 +1,47 @@
+{% extends 'layout/base.html' %}
+{% load bootstrap4 %}
+
+{% block title %}
+    Update post
+{% endblock %}
+
+
+{% block content %}
+    <style>
+        body {
+            background-color: #292b2c;
+        }
+    </style>
+    <div class="row">
+        <div class="col-12 col-lg-9 mx-auto m-4 rounded">
+            <h2 class="text-light">Update post</h2>
+            <div class="card p-3">
+                <div class="d-flex justify-content-between py-3">
+                    <div class="d-flex flex-row align-items-center">
+                        <img src="{{ post.author.picture.url }}"
+                             class="rounded" width="105">
+                        <div class="d-flex flex-column ml-2">
+                            <span class="font-weight-bold">{{ post.author.username }}</span>
+                            {% if first_name and last_name %}
+                                <small class="text-primary">{{ first_name }} {{ last_name }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <img src="{{ post.picture.url }}" class="img-fluid">
+                <div class="p-2">
+                    <small>
+                        {{ post.pub_date }}
+                    </small>
+                </div>
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% bootstrap_form form %}
+                    {% buttons submit="Update" %}{% endbuttons %}
+                    <a href="{% url 'main:home' %}" class="btn btn-danger">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

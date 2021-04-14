@@ -1,0 +1,108 @@
+{% extends 'layout/base.html' %}
+{% load bootstrap4 %}
+
+{% block title %}
+    Post {{ post.title }} by {{ post.author.username }}
+{% endblock %}
+
+
+{% block content %}
+    <style>
+
+
+        .card {
+            border: none;
+        }
+
+
+        .bdge {
+            height: 21px;
+            background-color: orange;
+            color: #fff;
+            font-size: 11px;
+            padding: 8px;
+            border-radius: 4px;
+            line-height: 3px
+        }
+
+        .comments {
+            text-decoration: underline;
+            text-underline-position: under;
+            cursor: pointer
+        }
+
+        .dot {
+            height: 7px;
+            width: 7px;
+            margin-top: 3px;
+            background-color: #bbb;
+            border-radius: 50%;
+            display: inline-block
+        }
+
+        .hit-voting:hover {
+            color: blue
+        }
+
+        .hit-voting {
+            cursor: pointer
+        }
+
+    </style>
+    <div class="mt-2 mb-5">
+        <div class="row d-flex align-items-center justify-content-center">
+            <div class="col-12 col-sm-10 col-md-10 col-lg-9 col-xl-7">
+                {% include 'layout/post.html' %}
+            </div>
+        </div>
+    </div>
+
+    <div class="comments">
+        <div class="container mt-5 mb-5">
+            <div class="d-flex justify-content-center row">
+                <div class="d-flex flex-column col-12 col-sm-12 col-md-10 col-lg-9">
+                    <div class="comment-bottom bg-white p-2 px-4">
+                        <div class="d-flex flex-row add-comment-section  mb-4">
+                            <div class="row"><img class="img-fluid img-responsive rounded mr-2" src=
+                                    "{{ request.user.picture.url }}" width="80">
+                            </div>
+                        </div>
+
+                        <form method="post">
+                            {% csrf_token %}
+                            {% bootstrap_form form %}
+                            {% buttons submit='Add comment' %}{% endbuttons %}
+                        </form>
+
+                        {% for comment in post.comment_set.all %}
+                            <div class="commented-section my-5">
+                            <div class="d-flex flex-row align-items-center commented-user">
+                                <img src="{{ comment.author.picture.url }}"
+                                     alt=""
+                                     height="40"
+                                     class="rounded mr-2"
+                                >
+
+                                <h5 class="mr-2">
+                                    {{ comment.author.username }}
+                                </h5>
+                                <span class="dot mb-1"></span>
+                                <span class="mb-1 ml-2">{{ comment.pub_date|timesince }}</span>
+                            </div>
+                            <div class="comment-text-sm">
+                                    <span>
+                                        {{ comment.content }}
+                                    </span>
+                            </div>
+                            <hr>
+
+                        {% empty %}
+                            <h4 class="text-dark">Become first one who will add comment to this post</h4>
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

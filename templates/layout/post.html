@@ -1,0 +1,63 @@
+{% load static %}
+{% load filtersandtags %}
+
+<div class="card">
+    <div class="d-flex justify-content-between pb-2">
+        <div class="d-flex flex-row align-items-center">
+            <img src="{{ post.author.picture.url }}"
+                 class="rounded" width="70">
+            <div class="d-flex flex-column ml-2">
+                <span class="font-weight-bold">
+                    <a href="{% url 'main:user_posts' username=post.author.username %}">
+                        {{ post.author.username }}
+                    </a>
+                </span>
+                {% if first_name and last_name %}
+                    <small class="text-primary">{{ first_name }} {{ last_name }}</small>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <img src="{{ post.picture.url }}" class="img-fluid">
+
+    <div class="p-2">
+        <h5>
+            {{ post.title }}
+        </h5>
+        <p class="text-justify">
+            {{ post.content }}
+        </p>
+        <small class="pb-4 d-flex align-items-center">
+            &#x1F553; {{ post.pub_date|timesince }} ago
+        </small>
+
+        <form method="post"
+              action="{% url 'main:post_like' %}"
+              class="like_form p-0 d-flex justify-content-start align-items-center"
+              id="{{ post.pk }}"
+        >
+            {% csrf_token %}
+            {% include 'layout/like.html' %}
+            <small class="d-block font-weight-bold text-danger like_count ml-1" style="font-size: 20px;">
+                <b>{{ post.likes.count }}</b>
+            </small>
+        </form>
+
+        <small class="pb-4 d-flex align-items-center font-weight-bold" style="font-size: 20px;">
+            &#128172; {{ post.comment_set.count }}
+        </small>
+    </div>
+
+    {% if request.user == post.author %}
+        <div class="buttons m-3">
+            <a href="{% url 'main:post_update' pk=post.pk %}" class="btn btn-primary">
+                Update
+            </a>
+            <a href="{% url 'main:post_delete' pk=post.pk %}" class="btn btn-danger">
+                Delete
+            </a>
+        </div>
+    {% endif %}
+
+</div>

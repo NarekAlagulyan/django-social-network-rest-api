@@ -1,0 +1,7 @@
+{% autoescape off %}
+Hi, {{ author.username }}
+{{ comment.author.username }} comment your post "{{ comment.post.title }}"
+    {{ comment.content }}
+Click link below to see the comment
+{{ host }}{% url 'main:post_detail' pk=comment.post.pk %}
+{% endautoescape %}

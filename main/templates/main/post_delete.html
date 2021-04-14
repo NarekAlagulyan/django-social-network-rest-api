@@ -1,0 +1,59 @@
+{% extends 'layout/base.html' %}
+{% load bootstrap4 %}
+
+{% block title %}
+    Delete post
+{% endblock %}
+
+
+{% block content %}
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap");
+        .card {
+            border: none;
+        }
+
+    </style>
+    <div class="mt-2 mb-5">
+        <div class="row d-flex align-items-center justify-content-center">
+            <div class="col-12 col-md-11 col-lg-8">
+                <div class="card p-1">
+                    <div class="d-flex justify-content-between pb-2">
+                        <div class="d-flex flex-row align-items-center">
+                            <img src="{{ post.author.picture.url }}"
+                            class="rounded" width="105">
+                        <div class="d-flex flex-column ml-2">
+                            <span class="font-weight-bold">{{ post.author.username }}</span>
+                            {% if first_name and last_name %}
+                                <small class="text-primary">{{ first_name }} {{ last_name }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    </div>
+                     <img src="{{ post.picture.url }}" class="img-fluid">
+                    <div class="p-2">
+                        <h5>
+                            {{ post.title }}
+                        </h5>
+                        <p class="text-justify">
+                            {{ post.content }}
+                        </p>
+                        <small>
+                            {{ post.pub_date }}
+                        </small>
+                    </div>
+                    <form method="post" class="mx-3">
+                        {% csrf_token %}
+                        {% buttons %}
+                            <button type="submit" class="btn btn-danger btn-block">
+                                Delete
+                            </button>
+                        {% endbuttons %}
+                        <a href="{% url 'main:home' %}" class="btn btn-primary btn-block">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
