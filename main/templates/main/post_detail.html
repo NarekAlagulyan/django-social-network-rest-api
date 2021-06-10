@@ -84,7 +84,9 @@
                                 >
 
                                 <h5 class="mr-2">
-                                    {{ comment.author.username }}
+                                    <a href="{% url 'main:user_posts' username=comment.author.username %}">
+                                        {{ comment.author.username }}
+                                    </a>
                                 </h5>
                                 <span class="dot mb-1"></span>
                                 <span class="mb-1 ml-2">{{ comment.pub_date|timesince }}</span>

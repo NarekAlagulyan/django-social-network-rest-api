@@ -1,8 +1,9 @@
-from django.urls import path
+from django.urls import path, include
 
 from .views import (
     HomePageView,
-    UserProfileView,
+    InSystemUserProfileView,
+    DifferentUserProfileView,
     UserRegisterView,
     UserProfileUpdateView,
     UserDeleteView,
@@ -23,36 +24,48 @@ from .views import (
     search_redirect_view,
 )
 
+# User profile patterns
+profile_urlpatterns = [
+    path('update/', UserProfileUpdateView.as_view(), name='user_update'),
+    path('delete/', UserDeleteView.as_view(), name='user_delete'),
+    path('password_reset/complete/', UserPasswordResetCompleteView.as_view(),
+         name='user_password_reset_complete'),
+    path('password_reset/<uidb64>/<token>/', UserPasswordResetConfirmView.as_view(),
+         name='user_password_reset_confirm'),
+    path('password_reset/done/', UserPasswordResetDoneView.as_view(), name='user_password_reset_done'),
+    path('password_reset/', UserPasswordResetView.as_view(), name='user_password_reset'),
+]
+
+
+# Authentication URL patterns
+accounts_urlpatterns = [
+    path('register/activate/<str:sign>/', activation_view, name='user_account_activate'),
+    path('register/', UserRegisterView.as_view(), name='user_register'),
+    path('login/', UserLoginView.as_view(), name='user_login'),
+    path('logout/', UserLogoutView.as_view(), name='user_logout'),
+    path('profile/', include(profile_urlpatterns)),
+    path('my-profile/', InSystemUserProfileView.as_view(), name='user_profile'),
+]
+
+
+post_urlpatterns = [
+    path('new/', PostCreateView.as_view(), name='post_create'),
+    path('<int:pk>/update/', PostUpdateView.as_view(), name='post_update'),
+    path('<int:pk>/delete/', PostDeleteView.as_view(), name='post_delete'),
+    path('<int:pk>/', user_post_detail_view, name='post_detail'),
+    path('post/like/', post_like_view, name='post_like'),
+    # path('post/<int:pk>/like/', post_like_view, name='post_like'),
+]
+
+
 app_name = 'main'
 urlpatterns = [
     path('', HomePageView.as_view(), name='home'),
-
-    # authentication
-    path('accounts/register/activate/<str:sign>/', activation_view, name='user_account_activate'),
-    path('accounts/register/', UserRegisterView.as_view(), name='user_register'),
-    path('accounts/login/', UserLoginView.as_view(), name='user_login'),
-    path('accounts/logout/', UserLogoutView.as_view(), name='user_logout'),
-    path('accounts/profile/update/', UserProfileUpdateView.as_view(), name='user_update'),
-    path('accounts/profile/delete/', UserDeleteView.as_view(), name='user_delete'),
-    path('accounts/profile/password_reset/complete/', UserPasswordResetCompleteView.as_view(),
-         name='user_password_reset_complete'),
-    path('accounts/profile/password_reset/<uidb64>/<token>/', UserPasswordResetConfirmView.as_view(),
-         name='user_password_reset_confirm'),
-    path('accounts/profile/password_reset/done/', UserPasswordResetDoneView.as_view(), name='user_password_reset_done'),
-    path('accounts/profile/password_reset/', UserPasswordResetView.as_view(), name='user_password_reset'),
-    path('accounts/my-profile/', UserProfileView.as_view(), name='user_profile'),
-
-    # post
-    path('post/new/', PostCreateView.as_view(), name='post_create'),
-    path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post_update'),
-    path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post_delete'),
-    path('post/<int:pk>/', user_post_detail_view, name='post_detail'),
-
-    # path('post/<int:pk>/like/', post_like_view, name='post_like'),
-    path('post/like/', post_like_view, name='post_like'),
-
-    path('<str:username>/posts/', UserPostListView.as_view(), name='user_posts'),
+    path('accounts/', include(accounts_urlpatterns)),
+    path('post/', include(post_urlpatterns)),
+    path('user-<slug:username>/posts/', DifferentUserProfileView.as_view(), name='user_posts'),
     path('search/', search_redirect_view, name='search_redirect'),
     path('search-user/<str:content>/', UserSearchListView.as_view(), name='search')
 
 ]
+''

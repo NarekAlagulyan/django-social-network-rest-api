@@ -47,8 +47,6 @@ INSTALLED_APPS = [
     'django_cleanup',
     'captcha',
     'rest_framework',
-    'corsheaders',
-
     'main.templatetags'
 ]
 
@@ -57,7 +55,6 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -154,14 +151,18 @@ LOGIN_REDIRECT_URL = 'main:user_profile'
 AUTH_USER_MODEL = 'main.User'
 
 
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = env('EMAIL_HOST')
 EMAIL_PORT = env('EMAIL_PORT')
-EMAIL_USE_SSL = env('EMAIL_USE_SSL')
 EMAIL_USE_TLS = env('EMAIL_USE_TLS')
 EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 
 # CAPTCHA SETUP
 CAPTCHA_LENGTH = 3
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SITE': 10
+}

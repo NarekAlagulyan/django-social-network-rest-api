@@ -1,48 +1,41 @@
+from rest_framework import decorators, status
 from rest_framework.response import Response
+from rest_framework.reverse import reverse
+from rest_framework.views import APIView
+from rest_framework import permissions
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView, ListAPIView, RetrieveAPIView, GenericAPIView
 from rest_framework.decorators import api_view
-from django.db.models.aggregates import Count
+from rest_framework.renderers import StaticHTMLRenderer
+from rest_framework import viewsets
+from rest_framework.decorators import action
 
-from main.models import User, Post, Comment, MostPostUserProxy, MostLikedPostProxy
-from .serializers import UserSerializer, PostSerializer, CommentSerializer
-# Create your views here.
-
-
-@api_view(['GET'])
-def user_api_view(request):
-    if request.method == 'GET':
-        users = User.objects.filter(is_active=True)[:5]
-        serialize = UserSerializer(users, many=True)
-        return Response(serialize.data)
+from django.shortcuts import get_object_or_404
+from django.views.generic import UpdateView
 
 
-@api_view(['GET'])
-def user_biggest_amount_of_post_view(request):
-    if request.method == 'GET':
-        users = MostPostUserProxy.objects.all()
-        serialize = UserSerializer(users, many=True)
-        return Response(serialize.data)
+from main.models import User
 
 
-@api_view(['GET'])
-def post_api_view(request):
-    if request.method == 'GET':
-        posts = Post.objects.all()[:30]
-        serialize = PostSerializer(posts, many=True)
-        return Response(serialize.data)
+from .serializers import PostSerializer, UserSerializer
+from .permissions import IsAuthorOrReadOnly
+from main.models import Post
 
 
-@api_view(['GET'])
-def most_liked_post_api_view(request):
-    if request.method == 'GET':
-        posts = MostLikedPostProxy.objects.all()
-        serialize = PostSerializer(posts, many=True)
-        return Response(serialize.data)
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
+
+    @action(detail=True, renderer_classes=[StaticHTMLRenderer])
+    def title(self, request, *args, **kwargs):
+        post = self.get_object()
+        return Response(post.title)
+
+    def perform_create(self, serializer):
+        serializer.save(self.request.user)
 
 
-@api_view(['GET'])
-def comment_api_view(request):
-    if request.method == 'GET':
-        comments = Comment.objects.filter()[:3]
-        serialize = CommentSerializer(comments, many=True)
-        return Response(serialize.data)
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 

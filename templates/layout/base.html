@@ -37,6 +37,7 @@
     $('.like_form').submit(function(event) {
         event.preventDefault();
         const post_id = $(this).attr('id');
+
         $.ajax({
             type: $(this).attr('method'),
             url: $(this).attr('action'),
@@ -44,8 +45,8 @@
                 'csrfmiddlewaretoken': '{{ csrf_token }}',
                 'post_id': post_id,
             },
-            success: function(data) {
 
+            success: function(data) {
                 let [count, liked] = [data['like_count'], data['post_liked']]
                 console.log(liked)
                 if (liked) {

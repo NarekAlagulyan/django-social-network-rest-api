@@ -1,8 +1,12 @@
+import django.contrib.auth.models
 from django.db import models
 from django.db.models.signals import post_save
 from django.db.models.aggregates import Count
 from django.contrib.auth.models import AbstractUser
 from django.db.models import Q, F
+from django.utils.safestring import mark_safe
+from django.utils.html import escape
+
 
 from .utilities import send_new_comment_notification
 
@@ -31,8 +35,19 @@ class User(AbstractUser):
         self.slug = self.username
         return super().save(*args, **kwargs)
 
+    @property
+    def get_picture_url(self):
+        return self.picture.url
+
+    def get_img_html_tag(self):
+        tag = f'<img src="{self.get_picture_url}" width="300px" class="rounded">'
+        return mark_safe(tag)
+
     class Meta(AbstractUser.Meta):
         pass
+
+    get_img_html_tag.short_description = 'User picture'
+    get_img_html_tags = True
 
 
 class MostPostUserManager(models.Manager):
@@ -51,7 +66,7 @@ class MostPostUserProxy(User):
 
 
 class Post(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Author')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts', verbose_name='Author')
     title = models.CharField(max_length=30, verbose_name='Title')
     content = models.TextField(verbose_name='Content')
     picture = models.ImageField(upload_to=POST_PIC_LOCATION, verbose_name='Post picture')
@@ -66,10 +81,21 @@ class Post(models.Model):
         self.slug = self.title
         return super().save(*args, **kwargs)
 
+    @property
+    def get_picture_url(self):
+        return self.picture.url
+
+    def get_img_html_tag(self):
+        tag = f'<img src="{self.get_picture_url}" width="300px" class="rounded">'
+        return mark_safe(tag)
+
     class Meta:
         verbose_name_plural = 'Posts'
         verbose_name = 'Post'
         ordering = ['-pub_date']
+
+    get_img_html_tag.short_description = 'Image'
+    get_img_html_tag.allow_tags = True
 
 
 class MostLikedPostManager(models.Manager):

@@ -19,13 +19,15 @@
                 <div class="px-4 pt-0 pb-4 cover">
                     <div class="media align-items-end profile-head">
                         <div class="profile mr-3">
-                            <a href="{{ request.user.picture.url }}" target="_blank">
-                                <img src="{{ request.user.picture.url }}" width="330px"
+                            <a href="{{ user.picture.url }}" target="_blank">
+                                <img src="{{ user.picture.url }}" width="330px"
                                      class="rounded mb-2 img-thumbnail">
                             </a>
-                            <a href="{% url 'main:user_update' %}" class="btn btn-dark btn-sm btn-block">
-                                Update profile
-                            </a>
+                            {% if is_request_users_profile %}
+                                <a href="{% url 'main:user_update' %}" class="btn btn-dark btn-sm btn-block">
+                                    Update profile
+                                </a>
+                            {% endif %}
                         </div>
                         <div class="media-body mb-5 text-white">
                             <h4 class="mt-0 mb-0">{{ user.username }}</h4>
@@ -66,11 +68,14 @@
                         {{ user.about }}
                     </div>
                 </div>
-                <div class="py-4 px-4">
-                    <div class="d-flex align-items-center justify-content-end mb-3">
-                        <a href="{% url 'main:post_create' %}" class="btn btn-primary">New post</a>
+                {% if is_request_users_profile %}
+                    <div class="py-4 px-4">
+                        <div class="d-flex align-items-center justify-content-end mb-3">
+                            <a href="{% url 'main:post_create' %}" class="btn btn-primary">New post</a>
+                        </div>
                     </div>
-                </div>
+                {% endif %}
+
             </div>
 
             {% for post in posts %}

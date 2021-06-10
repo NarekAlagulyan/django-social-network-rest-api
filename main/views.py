@@ -8,6 +8,7 @@ from django.contrib.auth.views import (
     PasswordResetConfirmView,
     PasswordResetCompleteView,
 )
+from django.views.generic.detail import SingleObjectMixin
 from django.views.decorators.http import require_POST
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -17,6 +18,11 @@ from django.core.signing import BadSignature
 from django.db.models import Q
 from django.http import JsonResponse
 from django.template import RequestContext
+
+
+from abc import ABC
+
+
 
 from .models import User, Post, Comment
 from .forms import UserRegisterForm, UserUpdateForm, CustomPasswordResetForm, PostCreateAndUpdateForm, CommentForm
@@ -37,9 +43,6 @@ def error_500_view(request, exception):
     return render(request, 'http_error/500.html')
 
 
-
-
-
 class HomePageView(ListView):
     model = Post
     context_object_name = 'posts'
@@ -50,25 +53,38 @@ class HomePageView(ListView):
         return Post.objects.select_related('author').all()
 
 
-class UserProfileView(LoginRequiredMixin, ListView):
+class AbstractUserProfileView(ABC, LoginRequiredMixin, ListView):
     template_name = 'main/user_profile.html'
     model = Post
     paginate_by = 3
     context_object_name = 'posts'
 
-    def setup(self, request, *args, **kwargs):
-        self.user_id = request.user.pk
-        return super().setup(request, *args, **kwargs)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = get_object_or_404(User, pk=self.user_id)
-        context['user_post_count'] = user.post_set.count()
+        context['user'] = user
+        context['user_post_count'] = user.posts.count()
+        context['is_request_users_profile'] = True if self.request.user == user else False
         return context
 
     def get_queryset(self):
         queryset = Post.objects.select_related('author').filter(author=self.user_id)
         return queryset
+
+
+class InSystemUserProfileView(AbstractUserProfileView):
+    def setup(self, request, *args, **kwargs):
+        self.user_id = request.user.pk
+        return super().setup(request, *args, **kwargs)
+
+
+class DifferentUserProfileView(AbstractUserProfileView):
+    def setup(self, request, *args, **kwargs):
+        self.user_id = get_object_or_404(User, username=kwargs['username']).pk
+        return super().setup(request, *args, **kwargs)
+
+
+
 
 
 class UserRegisterView(SuccessMessageMixin, CreateView):
@@ -252,22 +268,25 @@ def user_post_detail_view(request, pk):
         return render(request, 'main/post_detail.html', context)
 
 
-class UserPostListView(LoginRequiredMixin, ListView):
-    model = Post
+# TODO User object is not iterable, should fix this issue
+class UserPostListView(LoginRequiredMixin, SingleObjectMixin, ListView):
     context_object_name = 'posts'
     template_name = 'main/user_posts.html'
     paginate_by = 3
+    slug_url_kwarg = 'username'
 
-    def get_queryset(self):
-        username = self.kwargs['username']
-        queryset = Post.objects.select_related('author').filter(author__username=username)
-        return queryset
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object(queryset=User.objects.all())
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = get_object_or_404(User, username=self.kwargs['username'])
-        context['user'] = user
+        context['my_user'] = self.object
         return context
+
+    def get_queryset(self):
+        return self.object.posts.all()
+
 
 
 @require_POST
@@ -281,7 +300,7 @@ def post_like_view(request):
             post.likes.add(request.user)
         data = {
             'like_count': post.likes.count(),
-            'post_liked': True if post.likes.filter(pk=request.user.pk).exists() else False
+            'post_liked': post.likes.filter(pk=request.user.pk).exists()
         }
         return JsonResponse(data, safe=False)
 
@@ -302,3 +321,20 @@ class UserSearchListView(ListView):
         search = self.kwargs['content']
         q = (Q(username__icontains=search) | Q(first_name__icontains=search) | Q(last_name__icontains=search)) & Q(is_staff=False)
         return User.objects.filter(q)
+
+
+from django.views.generic.detail import SingleObjectMixin
+
+
+# class UserDetailView(SingleObjectMixin, ListView):
+#     def get(self, request, *args, **kwargs):
+#         self.object = self.get_object(queryset=User.objects.all())
+#         return super().get(request, *args, **kwargs)
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['object'] = self.object
+#         return context
+#
+#     def get_queryset(self):
+#         return self.object.post_set.all()

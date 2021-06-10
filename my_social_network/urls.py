@@ -5,11 +5,16 @@ from django.conf.urls.static import static
 from django.contrib.staticfiles.views import serve
 from django.views.decorators.cache import never_cache
 
+from rest_framework import routers
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('main.urls')),
+    path('', include('main.urls', namespace='main')),
     path('captcha/', include('captcha.urls')),
-    path('api/', include('api.urls')),
+    path('api/', include('api.urls', namespace='api')),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+
 ]
 
 if settings.DEBUG:
